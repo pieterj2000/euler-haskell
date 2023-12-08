@@ -17,6 +17,6 @@ powersUnder100 a = map (a^) [1..bound]
 calcFor :: Int -> Int
 calcFor = length . nub . concatMap (\b -> map (*b) [2..100]) . exponentsUnder100
 
---calc :: Int
+calc :: Int
 calc = sum . map calcFor . filter (`notElem` higherPowers) $ [2..100]
     where higherPowers = concatMap (tail . powersUnder100) [2..100]
