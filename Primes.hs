@@ -1,6 +1,7 @@
 module Primes (
     primes,
     divisor,
+    divides,
     primeFactorization,
     isPrime,
     isPrime',
@@ -9,6 +10,9 @@ module Primes (
     
     divisor :: Int -> Int -> Bool
     divisor a b = b `mod` a == 0
+    
+    divides :: Int -> Int -> Bool
+    divides = divisor
 
     primes :: [Int]
     primes = 2:3:[n | n<-[5,7..], isPrime n]
