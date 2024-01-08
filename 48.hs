@@ -1,20 +1,21 @@
 import Primes
+import Digits
 
 main = print calc
 
-calc = head $ filter (not . isGoldBach) $ filter odd $ filter (not . isPrime) [3..]
+calc = (`mod` (10^10)) .sum . map term $ [1..1000]
+calc' = (`mod` (10^10)) .sum . map (\x -> x^x) $ [1..1000]
 
-isGoldBach :: Int -> Bool
-isGoldBach n = any (isDoubleSquare . (n-)) $ possiblePrimes n
 
-possiblePrimes :: Int -> [Int]
-possiblePrimes n = takeWhile (<n) primes
+term :: Integer -> Integer
+term n = expmod n n (10^10)
 
-isDoubleSquare :: Int -> Bool
-isDoubleSquare = isSquare . (`div` 2)
 
-isSquare :: Int -> Bool
-isSquare = isInt . sqrt . fromIntegral
-
-isInt :: Double -> Bool
-isInt x = x == fromInteger (round x)
+-- a^m mod n
+--expmod :: Int -> Int -> Int -> Int
+expmod :: Integral a => a -> a -> a -> a
+expmod a m n = 
+    let binaryPowersModulo = iterate ((`mod` n) . (^2)) (a `mod` n)
+        binRep = intToDigitsRevBase 2 m
+        list = zipWith (^) binaryPowersModulo binRep
+    in  foldr1 (((`mod` n) . ) . (*)) list

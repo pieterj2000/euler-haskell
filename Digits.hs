@@ -17,7 +17,8 @@ intToDigits = reverse . intToDigitsRev
 digitsToInt :: [Int] -> Int
 digitsToInt = digitsToIntBase 10
     
-intToDigitsRevBase :: Int -> Int -> [Int]
+--intToDigitsRevBase :: Int -> Int -> [Int]
+intToDigitsRevBase :: Integral t => t -> t -> [t]
 intToDigitsRevBase _ 0 = []
 intToDigitsRevBase b n = (n `mod` b) : intToDigitsRevBase b (n `div` b)
 
