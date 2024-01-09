@@ -3,7 +3,9 @@ intToDigitsRev,
 intToDigits,
 digitsToInt,
 intToDigitsRevBase,
-digitsToIntBase
+digitsToIntBase,
+digitsToIntRevBase,
+digitsToIntRev
 ) where
 
     
@@ -24,3 +26,10 @@ intToDigitsRevBase b n = (n `mod` b) : intToDigitsRevBase b (n `div` b)
 
 digitsToIntBase :: Int -> [Int] -> Int
 digitsToIntBase b = foldl1 (\acc el -> acc * b + el)
+
+digitsToIntRevBase :: Int -> [Int] -> Int
+digitsToIntRevBase b [] = 0
+digitsToIntRevBase b (x:xs) = x + b*(digitsToIntRevBase b xs)
+
+digitsToIntRev :: [Int] -> Int
+digitsToIntRev = digitsToIntRevBase 10
