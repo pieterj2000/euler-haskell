@@ -11,7 +11,8 @@ getIncrement n
     | otherwise = Nothing
     where
         digits = intToDigitsRev n
-        ones = 1 `elem` digits
+        --ones = 1 `elem` digits
+        ones = length (filter (==1) digits) == 3
         replace :: Int -> Int
         replace x = if x == 1 then 1 else 0
 
