@@ -7,8 +7,15 @@ module Primes (
     isPrime',
     isPrime'',
     eulerTotientFromPrimeFactorization, --oud
-    fromFactorizationMult --oud
+    fromFactorizationMult, --oud
+    eulerTotient, -- mss niet extreem efficient
+    eulerTotient', -- oud
+    eulerTotientMapMaxSize --tmp?
 ) where
+
+    import qualified Data.IntMap.Lazy as IM
+    import qualified Data.IntSet as IS
+    import Data.IntMap.Lazy ((!))
     
     divisor :: Int -> Int -> Bool
     divisor a b = b `mod` a == 0
@@ -44,7 +51,35 @@ module Primes (
     isPrime'' = isPrimeWithDivisorList [2..]
 
 
-    ------------------OUD----------------------------------------------------
+    eulerTotient :: Int -> Int
+    eulerTotient = (eulerTotientList !!)
+
+    eulerTotientList :: [Int] --niet erg efficient als list, maar een map of sequence is niet lazy genoeg......
+    eulerTotientList = 0:1:1 : map (\n -> let
+                d = head . filter (`divisor` n) $ primes --[2..x]
+                k = divisorMult d n
+                dkm1 = d^(k-1)
+                dk = dkm1*d
+                prime = dk == n
+                totpk = dk - dkm1
+                rest = n `div` dk
+            in if prime then totpk else totpk * (eulerTotientList !! rest) )
+            [3..]
+
+
+    eulerTotientMapMaxSize :: Int -> IM.IntMap Int
+    eulerTotientMapMaxSize maxsize = let m = eulerTotientMapMaxSizeMap maxsize m in m
+    eulerTotientMapMaxSizeMap :: Int -> IM.IntMap Int -> IM.IntMap Int
+    eulerTotientMapMaxSizeMap maxnum self = IM.fromSet (\n -> let
+                d = head . filter (`divisor` n) $ primes --[2..x]
+                k = divisorMult d n
+                dkm1 = d^(k-1)
+                dk = dkm1*d
+                prime = dk == n
+                totpk = dk - dkm1
+                rest = n `div` dk
+            in if prime then totpk else totpk * (self ! rest) )
+            (IS.fromList [2..maxnum])
 
         
     divisorMult :: Int -> Int -> Int
@@ -52,6 +87,8 @@ module Primes (
         | not $ divisor a b = 0
         | otherwise = 1 + divisorMult a (b `div` a)
     
+    ------------------OUD----------------------------------------------------
+
     primeFactorizationMult :: Int -> [(Int, Int)]
     primeFactorizationMult 1 = []
     primeFactorizationMult x = (d,m) : primeFactorizationMult (x `div` d^m)
@@ -66,8 +103,8 @@ module Primes (
     eulerTotientFromPrimeFactorization [] = 1
     eulerTotientFromPrimeFactorization ((p, n):xs) = p^(n-1) * (p-1) * eulerTotientFromPrimeFactorization xs
     
-    eulerTotient :: Int -> Int
-    eulerTotient = eulerTotientFromPrimeFactorization . primeFactorizationMult
+    eulerTotient' :: Int -> Int
+    eulerTotient' = eulerTotientFromPrimeFactorization . primeFactorizationMult
 
     -- returns binary representation in list of digits from least to most significant
     binaryRepr :: Int -> [Int]
