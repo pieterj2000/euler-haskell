@@ -5,7 +5,9 @@ module Primes (
     primeFactorization,
     isPrime,
     isPrime',
-    isPrime''
+    isPrime'',
+    eulerTotientFromPrimeFactorization, --oud
+    fromFactorizationMult --oud
 ) where
     
     divisor :: Int -> Int -> Bool
