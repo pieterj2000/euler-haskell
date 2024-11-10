@@ -1,7 +1,7 @@
 import Digits
 import Data.List (unfoldr)
-import qualified Data.Vector.Unboxed as V
-import Data.Vector.Unboxed ((!), (//))
+import qualified Data.IntMap.Strict as M
+import Data.IntMap.Strict ((!?))
 import Control.Monad.State.Strict
 import Control.Monad (filterM)
 import Debug.Trace (traceShow, traceShowM)
@@ -14,12 +14,10 @@ fact = 1 : scanl1 (*) [1..9]
 next :: Int -> Int
 next = sum . map (fact !!) . intToDigitsRev
 
-type Arr = V.Vector Int
+type Arr = M.IntMap Int
 
 hasdepth :: Int -> M (Maybe Int)
-hasdepth n = get >>= \arr -> case arr ! n of
-    0 -> pure Nothing
-    x -> pure (Just x)
+hasdepth n = get >>= \arr -> return $ arr !? n
 
 -- zelfde als span, maar dan pakt hij het eerste element waar p niet voor geldt ook nog
 span1 :: (a -> Bool) -> [a] -> ([a], [a])
@@ -65,8 +63,9 @@ updatearrvoor n =
                     if hascycle then return scores else doe (y:xs)
     in do
         updates <- doe [n]
+        let updates' = M.fromList updates
         arr <- get
-        put $ arr // updates
+        put $ M.union arr updates'
 
 getdepth :: Int -> M Int
 getdepth n = do
@@ -78,13 +77,13 @@ getdepth n = do
 arraysize :: Int
 arraysize = (fact !! 9) * 7 + 1
 startarray :: Arr
-startarray = V.replicate arraysize 0
+startarray = M.empty
 
 resultaat :: [Int]
-resultaat = evalState (filterM (((==5) <$>) . getdepth) [1..999999]) startarray
+resultaat = evalState (filterM (((==60) <$>) . getdepth) [1..999999]) startarray
 
 
 test = evalState (sequence $ map getdepth $ [145, 169, 69, 540, 1454,363600, 363601]) startarray
 
 
-main = print resultaat
+main = print resultaat >> print (length resultaat)
