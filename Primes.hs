@@ -67,7 +67,7 @@ module Primes (
             [3..]
 
 
-    eulerTotientMapMaxSize :: Int -> IM.IntMap Int
+    eulerTotientMapMaxSize :: Int -> IM.IntMap Int -- eigenlijk hier vector/array van maken, heeft helemaal geen reden om een map te zijn
     eulerTotientMapMaxSize maxsize = let m = eulerTotientMapMaxSizeMap maxsize m in m
     eulerTotientMapMaxSizeMap :: Int -> IM.IntMap Int -> IM.IntMap Int
     eulerTotientMapMaxSizeMap maxnum self = IM.fromSet (\n -> let
